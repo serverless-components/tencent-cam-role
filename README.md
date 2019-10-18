@@ -59,8 +59,8 @@ $ serverless
 ```text
 DFOUNDERLIU-MB0:tencent-cos-component-master dfounderliu$ sls 
 
-  name:    z57nkg-pshpel3
-  roleId:  4611686018427736176
+  name:    z57nkg-5ogwwirn
+  roleId:  *********
   service: 
     - scf.qcloud.com
   policy: 
@@ -75,7 +75,7 @@ DFOUNDERLIU-MB0:tencent-cos-component-master dfounderliu$ sls
 DFOUNDERLIU-MB0:tencent-cos-component-master dfounderliu$ sls remove
 
   name:    z57nkg-5ogwwirn
-  roleId:  4611686018427736176
+  roleId:  ********
   service: 
     - scf.qcloud.com
   policy: 
