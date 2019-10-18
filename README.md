@@ -55,6 +55,40 @@ $ serverless
 
 &nbsp;
 
+### Test
+```text
+DFOUNDERLIU-MB0:tencent-cos-component-master dfounderliu$ sls 
+
+  name:    z57nkg-pshpel3
+  roleId:  4611686018427736176
+  service: 
+    - scf.qcloud.com
+  policy: 
+    roleName: QCS_SCFExcuteRole
+    policyId: 
+      - 534122
+      - 534803
+      - 1
+
+  3s › TencentCamRole › done
+  
+DFOUNDERLIU-MB0:tencent-cos-component-master dfounderliu$ sls remove
+
+  name:    z57nkg-5ogwwirn
+  roleId:  4611686018427736176
+  service: 
+    - scf.qcloud.com
+  policy: 
+    roleName: QCS_SCFExcuteRole
+    policyId: 
+      - 534122
+      - 534803
+      - 1
+
+  0s › TencentCamRole › done
+
+```
+
 ### New to Components?
 
 Checkout the [Serverless Components](https://github.com/serverless/components) repo for more information.
