@@ -40,7 +40,7 @@ class TencentCamRole extends Component {
   async default(inputs = {}) {
     inputs = mergeDeepRight(defaults, inputs)
 
-    var cam = this.getCamClient(this.context.credentials.tencent, inputs.region)
+    const cam = this.getCamClient(this.context.credentials.tencent, inputs.region)
 
     this.context.status(`Deploying`)
 
@@ -113,7 +113,7 @@ class TencentCamRole extends Component {
       return
     }
 
-    var cam = this.getCamClient(this.context.credentials.tencent, this.state.region)
+    const cam = this.getCamClient(this.context.credentials.tencent, this.state.region)
 
     this.context.debug(`Removing role ${this.state.name} from region ${this.state.region}.`)
     await deleteRole({ cam, ...this.state })
