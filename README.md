@@ -1,4 +1,4 @@
-# Tencent-cam-role-component
+# Tencent-cam-role
 
 Easily provision Tencent CAM roles using [Serverless Components](https://github.com/serverless/components).
 
@@ -39,7 +39,7 @@ TENCENT_SECRET_KEY=123
 # serverless.yml
 
 myRole:
-  component: "@serverless/tencent-cam-role-component"
+  component: "@serverless/tencent-cam-role"
   inputs:
     service: scf.qcloud.com
     policy:
