@@ -41,9 +41,9 @@ TENCENT_SECRET_KEY=123
 myRole:
   component: "@serverless/tencent-cam-role-component"
   inputs:
-    service: scf.cloud.tencent.com
+    service: scf.qcloud.com
     policy:
-      rollName: QCS_SCFExcuteRole
+      roleName: QCS_SCFExcuteRole
       policyId: 1
 ```
 
