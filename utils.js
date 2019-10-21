@@ -31,7 +31,7 @@ const addRolePolicy = async ({ cam, policy }) => {
     policyId = policy.policyId
     await AttachRolePolicyAction({ cam, roleName, policyId })
   }
-  return utils.sleep(2000)
+  return utils.sleep(4000)
 }
 
 const DetachRolePolicyAction = async ({ cam, roleName, policyId }) => {

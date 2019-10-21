@@ -54,7 +54,6 @@ class TencentCamRole extends Component {
         delete inputs.policy.roleId
       }
     }
-
     if (!prevRole) {
       this.context.debug(`Creating role ${inputs.name}.`)
       this.context.status(`Creating`)
