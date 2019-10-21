@@ -38,7 +38,7 @@ const DetachRolePolicyAction = async ({ cam, roleName, policyId }) => {
   const req = new camModels.DetachRolePolicyRequest()
   const body = {
     PolicyId: policyId,
-    DetachRoleName: roleName
+    DetachRoleName: policyId
   }
   req.from_json_string(JSON.stringify(body))
   const handler = util.promisify(cam.DetachRolePolicy.bind(cam))
