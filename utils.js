@@ -28,7 +28,7 @@ const addRolePolicy = async ({ cam, policy }) => {
       await AttachRolePolicyAction({ cam, roleName, policyId })
     }
   } else {
-    policyId = policy.roleName
+    policyId = policy.policyId
     await AttachRolePolicyAction({ cam, roleName, policyId })
   }
   return utils.sleep(2000)
@@ -58,7 +58,7 @@ const removeRolePolicy = async ({ cam, policy }) => {
       await DetachRolePolicyAction({ cam, roleName, policyId })
     }
   } else {
-    policyId = policy.roleName
+    policyId = policy.policyId
     await DetachRolePolicyAction({ cam, roleName, policyId })
   }
 }
