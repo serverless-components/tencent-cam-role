@@ -20,8 +20,8 @@ const defaults = {
   service: ['scf.qcloud.com'],
   policy: {
     roleName: 'QCS_SCFExcuteRole',
-    policyId: [534122, 534803],
-    policyName: ['QcloudSCFFullAccess', 'QcloudCLSFullAccess']
+    policyId: [],
+    policyName: []
   },
   region: 'ap-guangzhou'
 }

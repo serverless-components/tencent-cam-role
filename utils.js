@@ -257,14 +257,18 @@ const fullPolicyId = async (cam, inputs) => {
       for (let j = 0; j < pagePolicList.List.length; j++) {
         for (let i = 0; i < inputs.policy.policyId.length; i++) {
           if (pagePolicList.List[j].PolicyId == inputs.policy.policyId[i]) {
-            policyIdList.push(pagePolicList.List[j].PolicyId)
-            policyNameList.push(pagePolicList.List[j].PolicyName)
+          	if(policyIdList.indexOf(pagePolicList.List[j].PolicyId)==-1){
+							policyIdList.push(pagePolicList.List[j].PolicyId)
+							policyNameList.push(pagePolicList.List[j].PolicyName)
+						}
           }
         }
         for (let i = 0; i < inputs.policy.policyName.length; i++) {
           if (pagePolicList.List[j].PolicyName == inputs.policy.policyName[i]) {
-            policyIdList.push(pagePolicList.List[j].PolicyId)
-            policyNameList.push(pagePolicList.List[j].PolicyName)
+						if(policyIdList.indexOf(pagePolicList.List[j].PolicyId)==-1) {
+							policyIdList.push(pagePolicList.List[j].PolicyId)
+							policyNameList.push(pagePolicList.List[j].PolicyName)
+						}
           }
         }
       }
