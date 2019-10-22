@@ -1,6 +1,6 @@
 const { utils } = require('@serverless/core')
 const util = require('util')
-const { equals, not, pick, type } = require('ramda')
+const { equals, pick, type } = require('ramda')
 const tencentcloud = require('tencentcloud-sdk-nodejs')
 const camModels = tencentcloud.cam.v20190116.Models
 
@@ -15,7 +15,7 @@ const AttachRolePolicyAction = async ({ cam, roleName, policyId }) => {
   try {
     await handler(req)
   } catch (e) {
-    throw e
+    throw 'AttachRolePolicyAction: ' + e
   }
 }
 
@@ -24,6 +24,7 @@ const addRolePolicy = async ({ cam, policy }) => {
   let policyId = null
   if (type(policy.policyId) === 'Array') {
     for (let policyIndex = 0; policyIndex < policy.policyId.length; policyIndex++) {
+      await utils.sleep(1000)
       policyId = policy.policyId[policyIndex]
       await AttachRolePolicyAction({ cam, roleName, policyId })
     }
@@ -31,7 +32,6 @@ const addRolePolicy = async ({ cam, policy }) => {
     policyId = policy.policyId
     await AttachRolePolicyAction({ cam, roleName, policyId })
   }
-  return utils.sleep(4000)
 }
 
 const DetachRolePolicyAction = async ({ cam, roleName, policyId }) => {
@@ -45,16 +45,17 @@ const DetachRolePolicyAction = async ({ cam, roleName, policyId }) => {
   try {
     await handler(req)
   } catch (e) {
-    throw e
+    throw 'DetachRolePolicyAction: ' + e
   }
 }
 
-const removeRolePolicy = async ({ cam, policy }) => {
+const removeRolePolicy = async ({ cam, policyList, policy }) => {
   const roleName = policy.roleName
   let policyId = null
   if (type(policy.policyId) === 'Array') {
-    for (let policyIndex = 0; policyIndex < policy.policyId.length; policyIndex++) {
-      policyId = policy.policyId[policyIndex]
+    for (let policyIndex = 0; policyIndex < policyList.length; policyIndex++) {
+      await utils.sleep(1000)
+      policyId = policyList[policyIndex]
       await DetachRolePolicyAction({ cam, roleName, policyId })
     }
   } else {
@@ -88,7 +89,7 @@ const createRole = async ({ cam, service, policy }) => {
     await addRolePolicy({ cam, policy })
     return result.RoleId
   } catch (e) {
-    throw e
+    throw 'createRole: ' + e
   }
 }
 
@@ -101,7 +102,7 @@ const deleteRole = async ({ cam, policy }) => {
   try {
     await handler(req)
   } catch (e) {
-    throw e
+    throw 'deleteRole: ' + e
   }
 }
 
@@ -122,7 +123,7 @@ const getRole = async ({ cam, policy }) => {
     if (e.message.includes('role not exist')) {
       return null
     }
-    throw e
+    throw 'getRole: ' + e
   }
 }
 
@@ -149,15 +150,52 @@ const updateAssumeRolePolicy = async ({ cam, service, policy }) => {
   try {
     await handler(req)
   } catch (e) {
-    throw e
+    throw 'updateAssumeRolePolicy: ' + e
   }
 }
 
-const inputsChanged = (prevRole, role) => {
-  // todo policyId
+const inputsChanged = async (cam, prevRole, role) => {
+  const req = new camModels.ListAttachedRolePoliciesRequest()
+  let pagePolicyCount = 1
+  let page = 1
+  let pagePolicyList
+  const policyIdList = new Array()
+  let body
+  while (pagePolicyCount > 0) {
+    await utils.sleep(500)
+    body = {
+      RoleId: prevRole.roleId,
+      Page: page,
+      Rp: 200
+    }
+    req.from_json_string(JSON.stringify(body))
+    const handler = util.promisify(cam.ListAttachedRolePolicies.bind(cam))
+    try {
+      pagePolicyList = await handler(req)
+      pagePolicyCount = pagePolicyList.List.length
+      for (let i = 0; i < pagePolicyList.List.length; i++) {
+        policyIdList.push(pagePolicyList.List[i].PolicyId)
+      }
+    } catch (e) {
+      if (e.message.includes('role not exist')) {
+        return null
+      }
+      throw 'inputsChanged: ' + e
+    }
+    page = page + 1
+  }
+
+  policyIdList.sort()
+  let rolePolicyId = new Array()
+  if (type(role.policy.policyId) === 'Array') {
+    role.policy.policyId.sort()
+    rolePolicyId = role.policy.policyId
+  } else {
+    rolePolicyId.push(role.policy.policyId)
+  }
+
   const inputsService = pick(['service'], role)
   const prevInputsService = pick(['service'], prevRole)
-
   if (type(inputsService.service) === 'Array') {
     inputsService.service.sort()
   }
@@ -165,7 +203,79 @@ const inputsChanged = (prevRole, role) => {
     prevInputsService.service.sort()
   }
 
-  return not(equals(inputsService, prevInputsService))
+  return {
+    service: !equals(inputsService, prevInputsService),
+    policy: !equals(policyIdList, rolePolicyId),
+    policyList: policyIdList
+  }
+}
+
+const fullPolicyId = async (cam, inputs) => {
+  /*
+		Inputs:
+			{
+				service: [ 'scf.qcloud.com', 'cos.qcloud.com' ],
+				policy: {
+					roleName: 'QCS_SCFExcuteRole',
+					policyId: [ 1, 2, 3 ],
+					policyName: [ 'QcloudAccessForCDNRole' ]
+				},
+				region: 'ap-guangzhou'
+			}
+	 */
+  const req = new camModels.ListPoliciesRequest()
+  let body
+  let handler
+  let page = 1
+  let pagePolicList
+  let pagePolicyCount = 1
+  const policyIdList = new Array()
+  const policyNameList = new Array()
+
+  if (!(type(inputs.policy.policyId) === 'Array')) {
+    const tempPolicyIdArray = new Array()
+    tempPolicyIdArray.push(inputs.policy.policyId)
+    inputs.policy.policyId = tempPolicyIdArray
+  }
+  if (!(type(inputs.policy.policyName) === 'Array')) {
+    const tempPolicyNameArray = new Array()
+    tempPolicyNameArray.push(inputs.policy.policyName)
+    inputs.policy.policyName = tempPolicyNameArray
+  }
+
+  while (pagePolicyCount > 0) {
+    await utils.sleep(500)
+    body = {
+      Rp: 200,
+      Page: page
+    }
+    req.from_json_string(JSON.stringify(body))
+    handler = util.promisify(cam.ListPolicies.bind(cam))
+    try {
+      pagePolicList = await handler(req)
+      pagePolicyCount = pagePolicList.List.length
+      for (let j = 0; j < pagePolicList.List.length; j++) {
+        for (let i = 0; i < inputs.policy.policyId.length; i++) {
+          if (pagePolicList.List[j].PolicyId == inputs.policy.policyId[i]) {
+            policyIdList.push(pagePolicList.List[j].PolicyId)
+            policyNameList.push(pagePolicList.List[j].PolicyName)
+          }
+        }
+        for (let i = 0; i < inputs.policy.policyName.length; i++) {
+          if (pagePolicList.List[j].PolicyName == inputs.policy.policyName[i]) {
+            policyIdList.push(pagePolicList.List[j].PolicyId)
+            policyNameList.push(pagePolicList.List[j].PolicyName)
+          }
+        }
+      }
+    } catch (e) {
+      throw 'fullPolicyId: ' + e
+    }
+    page = page + 1
+  }
+  inputs.policy.policyName = policyNameList
+  inputs.policy.policyId = policyIdList
+  return inputs
 }
 
 module.exports = {
@@ -175,5 +285,6 @@ module.exports = {
   addRolePolicy,
   removeRolePolicy,
   updateAssumeRolePolicy,
-  inputsChanged
+  inputsChanged,
+  fullPolicyId
 }

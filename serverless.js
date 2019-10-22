@@ -12,14 +12,16 @@ const {
   addRolePolicy,
   removeRolePolicy,
   updateAssumeRolePolicy,
-  inputsChanged
+  inputsChanged,
+  fullPolicyId
 } = require('./utils')
 
 const defaults = {
   service: ['scf.qcloud.com'],
   policy: {
     roleName: 'QCS_SCFExcuteRole',
-    policyId: [534122, 534803, 1]
+    policyId: [534122, 534803],
+    policyName: ['QcloudSCFFullAccess', 'QcloudCLSFullAccess']
   },
   region: 'ap-guangzhou'
 }
@@ -42,6 +44,7 @@ class TencentCamRole extends Component {
 
     const cam = this.getCamClient(this.context.credentials.tencent, inputs.region)
 
+    inputs = await fullPolicyId(cam, inputs)
     this.context.status(`Deploying`)
 
     inputs.name = this.state.name || this.context.resourceId()
@@ -60,17 +63,20 @@ class TencentCamRole extends Component {
       inputs.roleId = await createRole({ cam, ...inputs })
     } else {
       inputs.roleId = prevRole.roleId
-      if (inputsChanged(prevRole, inputs)) {
+      const changed = await inputsChanged(cam, prevRole, inputs)
+      const serviceChanged = changed.service
+      const policyChanged = changed.policy
+      const policyList = changed.policyList
+      if (serviceChanged) {
         this.context.status(`Updating`)
-        if (prevRole.service !== inputs.service) {
-          this.context.debug(`Updating service for role ${inputs.name}.`)
-          await updateAssumeRolePolicy({ cam, ...inputs })
-        }
-        if (!equals(prevRole.policy, inputs.policy)) {
-          this.context.debug(`Updating policy for role ${inputs.name}.`)
-          await removeRolePolicy({ cam, ...inputs })
-          await addRolePolicy({ cam, ...inputs })
-        }
+        this.context.debug(`Updating service for role ${inputs.name}.`)
+        await updateAssumeRolePolicy({ cam, ...inputs })
+      }
+      if (policyChanged) {
+        this.context.status(`Updating`)
+        this.context.debug(`Updating policy for role ${inputs.name}.`)
+        await removeRolePolicy({ cam, policyList, ...inputs })
+        await addRolePolicy({ cam, ...inputs })
       }
     }
 
