@@ -94,7 +94,6 @@ const createRole = async ({ cam, service, policy }) => {
 }
 
 const deleteRole = async ({ cam, policy }) => {
-  await removeRolePolicy({ cam, policy })
   const req = new camModels.DeleteRoleRequest()
   const body = { RoleName: policy.roleName }
   req.from_json_string(JSON.stringify(body))

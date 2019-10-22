@@ -38,14 +38,23 @@ TENCENT_SECRET_KEY=123
 ```yml
 # serverless.yml
 
-myRole:
-  component: "@serverless/tencent-cam-role"
+myFunction1:
+  component: "./tencent-cam-role"
   inputs:
-    service: scf.qcloud.com
+    service:
+      - scf.qcloud.com
+      - cos.qcloud.com
     policy:
       roleName: QCS_SCFExcuteRole
-      policyId: 1
-```
+      policyId:
+        - 1
+        - 2
+      policyName:
+        - QCloudResourceFullAccess
+        - QcloudAccessForCDNRole
+ ```
+ 
+ * The binding between policyName and policyId is bound.
 
 ### 4. Deploy
 
@@ -57,35 +66,31 @@ $ serverless
 
 ### Test
 ```text
-DFOUNDERLIU-MB0:tencent-cos-component-master dfounderliu$ sls 
+DFOUNDERLIU-MB0:temp dfounderliu$ sls
 
-  name:    z57nkg-5ogwwirn
-  roleId:  *********
-  service: 
-    - scf.qcloud.com
-  policy: 
-    roleName: QCS_SCFExcuteRole
-    policyId: 
-      - 534122
-      - 534803
-      - 1
+  myFunction1: 
+    name:    w9pe3ej-jzy0lsg
+    roleId:  4611686018427945536
+    service: 
+      - scf.qcloud.com
+      - cos.qcloud.com
+    policy: 
+      roleName:   QCS_SCFExcuteRole
+      policyId: 
+        - 1
+        - 2
+        - 16313162
+      policyName: 
+        - AdministratorAccess
+        - QCloudResourceFullAccess
+        - QcloudAccessForCDNRole
 
-  3s › TencentCamRole › done
-  
-DFOUNDERLIU-MB0:tencent-cos-component-master dfounderliu$ sls remove
+  8s › myFunction1 › done
 
-  name:    z57nkg-5ogwwirn
-  roleId:  ********
-  service: 
-    - scf.qcloud.com
-  policy: 
-    roleName: QCS_SCFExcuteRole
-    policyId: 
-      - 534122
-      - 534803
-      - 1
+DFOUNDERLIU-MB0:temp dfounderliu$ sls remove
 
-  0s › TencentCamRole › done
+  2s › myFunction1 › done
+
 
 ```
 
