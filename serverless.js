@@ -20,6 +20,7 @@ const defaults = {
   service: ['scf.qcloud.com'],
   policy: {
     roleName: 'QCS_SCFExcuteRole',
+    description: "This is tencent-cam-role component.",
     policyId: [],
     policyName: []
   },

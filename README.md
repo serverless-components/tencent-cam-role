@@ -46,9 +46,10 @@ myFunction1:
       - cos.qcloud.com
     policy:
       roleName: QCS_SCFExcuteRole
-      policyId:
-        - 1
-        - 2
+      # description: test # Optional
+      # policyId:  # PolicyId and policyName must exist at least one
+        # - 1
+        # - 2
       policyName:
         - QCloudResourceFullAccess
         - QcloudAccessForCDNRole

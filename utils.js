@@ -80,7 +80,8 @@ const createRole = async ({ cam, service, policy }) => {
   const req = new camModels.CreateRoleRequest()
   const body = {
     RoleName: policy.roleName,
-    PolicyDocument: JSON.stringify(PolicyDocument)
+    PolicyDocument: JSON.stringify(PolicyDocument),
+    Description: policy.description
   }
   req.from_json_string(JSON.stringify(body))
   const handler = util.promisify(cam.CreateRole.bind(cam))
