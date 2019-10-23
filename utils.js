@@ -15,7 +15,7 @@ const AttachRolePolicyAction = async ({ cam, roleName, policyId }) => {
   try {
     await handler(req)
   } catch (e) {
-    throw 'AttachRolePolicyAction: ' + e
+    throw 'AttachRolePolicyActionError: ' + e
   }
 }
 
@@ -45,7 +45,7 @@ const DetachRolePolicyAction = async ({ cam, roleName, policyId }) => {
   try {
     await handler(req)
   } catch (e) {
-    throw 'DetachRolePolicyAction: ' + e
+    throw 'DetachRolePolicyActionError: ' + e
   }
 }
 
@@ -90,7 +90,7 @@ const createRole = async ({ cam, service, policy }) => {
     await addRolePolicy({ cam, policy })
     return result.RoleId
   } catch (e) {
-    throw 'createRole: ' + e
+    throw 'CreateRoleError: ' + e
   }
 }
 
@@ -102,7 +102,7 @@ const deleteRole = async ({ cam, policy }) => {
   try {
     await handler(req)
   } catch (e) {
-    throw 'deleteRole: ' + e
+    throw 'DeleteRoleError: ' + e
   }
 }
 
@@ -123,7 +123,7 @@ const getRole = async ({ cam, policy }) => {
     if (e.message.includes('role not exist')) {
       return null
     }
-    throw 'getRole: ' + e
+    throw 'GetRoleError: ' + e
   }
 }
 
@@ -150,7 +150,7 @@ const updateAssumeRolePolicy = async ({ cam, service, policy }) => {
   try {
     await handler(req)
   } catch (e) {
-    throw 'updateAssumeRolePolicy: ' + e
+    throw 'UpdateAssumeRolePolicyError: ' + e
   }
 }
 
@@ -180,7 +180,7 @@ const inputsChanged = async (cam, prevRole, role) => {
       if (e.message.includes('role not exist')) {
         return null
       }
-      throw 'inputsChanged: ' + e
+      throw 'InputsChangedEError: ' + e
     }
     page = page + 1
   }
@@ -273,7 +273,7 @@ const fullPolicyId = async (cam, inputs) => {
         }
       }
     } catch (e) {
-      throw 'fullPolicyId: ' + e
+      throw 'GetPolicyIdListError: ' + e
     }
     page = page + 1
   }
