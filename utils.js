@@ -22,9 +22,16 @@ const AttachRolePolicyAction = async ({ cam, roleName, policyId }) => {
 const addRolePolicy = async ({ cam, policy }) => {
   const roleName = policy.roleName
   let policyId = null
+  /*
+		policyId could be one policy or many policies
+		if policy.policyId is array:
+			Loop AttachRolePolicyAction
+		else:
+			AttachRolePolicyAction
+	 */
   if (type(policy.policyId) === 'Array') {
     for (let policyIndex = 0; policyIndex < policy.policyId.length; policyIndex++) {
-      await utils.sleep(1000)
+      await utils.sleep(1000) // Prevent overclocking
       policyId = policy.policyId[policyIndex]
       await AttachRolePolicyAction({ cam, roleName, policyId })
     }
@@ -52,9 +59,16 @@ const DetachRolePolicyAction = async ({ cam, roleName, policyId }) => {
 const removeRolePolicy = async ({ cam, policyList, policy }) => {
   const roleName = policy.roleName
   let policyId = null
+  /*
+		policyId could be one policy or many policies
+		if policy.policyId is array:
+			Loop AttachRolePolicyAction
+		else:
+			AttachRolePolicyAction
+	 */
   if (type(policy.policyId) === 'Array') {
     for (let policyIndex = 0; policyIndex < policyList.length; policyIndex++) {
-      await utils.sleep(1000)
+      await utils.sleep(1000) // Prevent overclocking
       policyId = policyList[policyIndex]
       await DetachRolePolicyAction({ cam, roleName, policyId })
     }
@@ -162,7 +176,7 @@ const inputsChanged = async (cam, prevRole, role) => {
   const policyIdList = new Array()
   let body
   while (pagePolicyCount > 0) {
-    await utils.sleep(500)
+    await utils.sleep(500) // Prevent overclocking
     body = {
       RoleId: prevRole.roleId,
       Page: page,
@@ -212,6 +226,7 @@ const inputsChanged = async (cam, prevRole, role) => {
 
 const fullPolicyId = async (cam, inputs) => {
   /*
+		Take the union of policyid and policyname
 		Inputs:
 			{
 				service: [ 'scf.qcloud.com', 'cos.qcloud.com' ],
@@ -243,8 +258,10 @@ const fullPolicyId = async (cam, inputs) => {
     inputs.policy.policyName = tempPolicyNameArray
   }
 
+  // cam could not get policyId through policyName, has not this type api
+  // so use ListPolicies api to get  policy list
   while (pagePolicyCount > 0) {
-    await utils.sleep(500)
+    await utils.sleep(500) // Prevent overclocking
     body = {
       Rp: 200,
       Page: page
@@ -252,23 +269,26 @@ const fullPolicyId = async (cam, inputs) => {
     req.from_json_string(JSON.stringify(body))
     handler = util.promisify(cam.ListPolicies.bind(cam))
     try {
+      // todo reduce complexity
       pagePolicList = await handler(req)
       pagePolicyCount = pagePolicList.List.length
       for (let j = 0; j < pagePolicList.List.length; j++) {
         for (let i = 0; i < inputs.policy.policyId.length; i++) {
           if (pagePolicList.List[j].PolicyId == inputs.policy.policyId[i]) {
-          	if(policyIdList.indexOf(pagePolicList.List[j].PolicyId)==-1){
-							policyIdList.push(pagePolicList.List[j].PolicyId)
-							policyNameList.push(pagePolicList.List[j].PolicyName)
-						}
+            // Skip if policyid already exists
+            if (policyIdList.indexOf(pagePolicList.List[j].PolicyId) == -1) {
+              policyIdList.push(pagePolicList.List[j].PolicyId)
+              policyNameList.push(pagePolicList.List[j].PolicyName)
+            }
           }
         }
         for (let i = 0; i < inputs.policy.policyName.length; i++) {
           if (pagePolicList.List[j].PolicyName == inputs.policy.policyName[i]) {
-						if(policyIdList.indexOf(pagePolicList.List[j].PolicyId)==-1) {
-							policyIdList.push(pagePolicList.List[j].PolicyId)
-							policyNameList.push(pagePolicList.List[j].PolicyName)
-						}
+            // Skip if policyid already exists
+            if (policyIdList.indexOf(pagePolicList.List[j].PolicyId) == -1) {
+              policyIdList.push(pagePolicList.List[j].PolicyId)
+              policyNameList.push(pagePolicList.List[j].PolicyName)
+            }
           }
         }
       }

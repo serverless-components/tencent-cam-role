@@ -1,4 +1,4 @@
-const { equals, mergeDeepRight } = require('ramda')
+const { mergeDeepRight } = require('ramda')
 const { Component } = require('@serverless/core')
 const tencentcloud = require('tencentcloud-sdk-nodejs')
 const CamClient = tencentcloud.cam.v20190116.Client
@@ -20,7 +20,7 @@ const defaults = {
   service: ['scf.qcloud.com'],
   policy: {
     roleName: 'QCS_SCFExcuteRole',
-    description: "This is tencent-cam-role component.",
+    description: 'This is tencent-cam-role component.',
     policyId: [],
     policyName: []
   },
@@ -112,7 +112,6 @@ class TencentCamRole extends Component {
   }
 
   async remove() {
-
     this.context.status(`Removing`)
 
     if (!this.state.name) {
@@ -121,7 +120,6 @@ class TencentCamRole extends Component {
     }
 
     const cam = this.getCamClient(this.context.credentials.tencent, this.state.region)
-
 
     this.context.debug(`Removing role ${this.state.name} from region ${this.state.region}.`)
     await deleteRole({ cam, ...this.state })
