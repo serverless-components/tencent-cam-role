@@ -18,9 +18,9 @@ const {
 
 const defaults = {
   service: ['scf.qcloud.com'],
+  roleName: 'QCS_SCFExcuteRole',
+  description: 'This is tencent-cam-role component.',
   policy: {
-    roleName: 'QCS_SCFExcuteRole',
-    description: 'This is tencent-cam-role component.',
     policyId: [],
     policyName: []
   },
@@ -81,15 +81,17 @@ class TencentCamRole extends Component {
       }
     }
 
-    // todo we probably don't need this logic now that
     // we auto generate unconfigurable names
-    if (this.state.name && this.state.name !== inputs.name) {
+    const oldRole = await getRole({ cam, ...this.state })
+    if (this.state.roleName && this.state.roleName !== inputs.roleName && oldRole) {
       this.context.status(`Replacing`)
       this.context.debug(`Deleting/Replacing role ${inputs.name}.`)
-      await deleteRole({ cam, name: this.state.name, policy: inputs.policy })
+      await deleteRole({ cam, roleName: this.state.roleName })
     }
 
     this.state.name = inputs.name
+    this.state.roleName = inputs.roleName
+    this.state.roleDescription = inputs.description
     this.state.roleId = inputs.roleId
     this.state.service = inputs.service
     this.state.policy = inputs.policy
@@ -99,7 +101,8 @@ class TencentCamRole extends Component {
     this.context.debug(`Saved state for role ${inputs.name}.`)
 
     const outputs = {
-      name: inputs.name,
+      roleName: inputs.roleName,
+      description: inputs.description,
       roleId: inputs.roleId,
       service: inputs.service,
       policy: inputs.policy
@@ -128,7 +131,7 @@ class TencentCamRole extends Component {
     )
 
     const outputs = {
-      name: this.state.name,
+      roleName: this.state.roleName,
       roleId: this.state.roleId || 'Removed',
       service: this.state.service,
       policy: this.state.policy

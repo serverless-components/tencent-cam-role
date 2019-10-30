@@ -19,9 +19,7 @@ const AttachRolePolicyAction = async ({ cam, roleName, policyId }) => {
   }
 }
 
-const addRolePolicy = async ({ cam, policy }) => {
-  const roleName = policy.roleName
-  let policyId = null
+const addRolePolicy = async ({ cam, roleName, policyId, policy }) => {
   /*
 		policyId could be one policy or many policies
 		if policy.policyId is array:
@@ -36,7 +34,6 @@ const addRolePolicy = async ({ cam, policy }) => {
       await AttachRolePolicyAction({ cam, roleName, policyId })
     }
   } else {
-    policyId = policy.policyId
     await AttachRolePolicyAction({ cam, roleName, policyId })
   }
 }
@@ -56,9 +53,7 @@ const DetachRolePolicyAction = async ({ cam, roleName, policyId }) => {
   }
 }
 
-const removeRolePolicy = async ({ cam, policyList, policy }) => {
-  const roleName = policy.roleName
-  let policyId = null
+const removeRolePolicy = async ({ cam, roleName, policyId, policyList, policy }) => {
   /*
 		policyId could be one policy or many policies
 		if policy.policyId is array:
@@ -73,12 +68,11 @@ const removeRolePolicy = async ({ cam, policyList, policy }) => {
       await DetachRolePolicyAction({ cam, roleName, policyId })
     }
   } else {
-    policyId = policy.policyId
     await DetachRolePolicyAction({ cam, roleName, policyId })
   }
 }
 
-const createRole = async ({ cam, service, policy }) => {
+const createRole = async ({ cam, roleName, description, service, policy }) => {
   const PolicyDocument = {
     version: '2.0',
     statement: [
@@ -93,24 +87,24 @@ const createRole = async ({ cam, service, policy }) => {
   }
   const req = new camModels.CreateRoleRequest()
   const body = {
-    RoleName: policy.roleName,
+    RoleName: roleName,
     PolicyDocument: JSON.stringify(PolicyDocument),
-    Description: policy.description
+    Description: description
   }
   req.from_json_string(JSON.stringify(body))
   const handler = util.promisify(cam.CreateRole.bind(cam))
   try {
     const result = await handler(req)
-    await addRolePolicy({ cam, policy })
+    await addRolePolicy({ cam, roleName, policy })
     return result.RoleId
   } catch (e) {
     throw 'CreateRoleError: ' + e
   }
 }
 
-const deleteRole = async ({ cam, policy }) => {
+const deleteRole = async ({ cam, roleName }) => {
   const req = new camModels.DeleteRoleRequest()
-  const body = { RoleName: policy.roleName }
+  const body = { RoleName: roleName }
   req.from_json_string(JSON.stringify(body))
   const handler = util.promisify(cam.DeleteRole.bind(cam))
   try {
@@ -120,9 +114,9 @@ const deleteRole = async ({ cam, policy }) => {
   }
 }
 
-const getRole = async ({ cam, policy }) => {
+const getRole = async ({ cam, roleName }) => {
   const req = new camModels.GetRoleRequest()
-  const body = { RoleName: policy.roleName }
+  const body = { RoleName: roleName }
   req.from_json_string(JSON.stringify(body))
   const handler = util.promisify(cam.GetRole.bind(cam))
   try {
@@ -141,7 +135,7 @@ const getRole = async ({ cam, policy }) => {
   }
 }
 
-const updateAssumeRolePolicy = async ({ cam, service, policy }) => {
+const updateAssumeRolePolicy = async ({ cam, service, roleName }) => {
   const PolicyDocument = {
     version: '2.0',
     statement: [
@@ -156,7 +150,7 @@ const updateAssumeRolePolicy = async ({ cam, service, policy }) => {
   }
   const req = new camModels.UpdateAssumeRolePolicyRequest()
   const body = {
-    RoleName: policy.roleName,
+    RoleName: roleName,
     PolicyDocument: JSON.stringify(PolicyDocument)
   }
   req.from_json_string(JSON.stringify(body))

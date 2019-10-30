@@ -46,14 +46,14 @@ TENCENT_APP_ID=123
 # serverless.yml
 
 myFunction1:
-  component: "./tencent-cam-role"
+  component: "@serverless/tencent-cam-role"
   inputs:
+    roleName: QCS_SCFExcuteRole
+    # description: test # Optional
     service:
       - scf.qcloud.com
       - cos.qcloud.com
     policy:
-      roleName: QCS_SCFExcuteRole
-      # description: test # Optional
       # policyId:  # PolicyId and policyName must exist at least one
         # - 1
         # - 2
