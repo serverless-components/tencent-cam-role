@@ -91,7 +91,7 @@ $ sls --debug
         - QCloudResourceFullAccess
         - QcloudAccessForCDNRole
 
-  17s › myFunction1 › done
+  17s › myRole › done
 
 ```
 
