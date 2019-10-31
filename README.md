@@ -8,6 +8,7 @@ Easily provision Tencent CAM roles using [Serverless Components](https://github.
 2. [Create](#2-create)
 3. [Configure](#3-configure)
 4. [Deploy](#4-deploy)
+4. [Remove](#5-remove)
 
 &nbsp;
 
@@ -32,6 +33,7 @@ Add the access keys of a [Tencent CAM Role](https://console.cloud.tencent.com/ca
 # .env
 TENCENT_SECRET_ID=XXX
 TENCENT_SECRET_KEY=XXX
+TENCENT_APP_ID=123
 ```
 * If you don't have a Tencent Cloud account, you could [sign up](https://intl.cloud.tencent.com/register) first. 
 
@@ -40,60 +42,68 @@ TENCENT_SECRET_KEY=XXX
 ```yml
 # serverless.yml
 
-myFunction1:
+myRole:
   component: "@serverless/tencent-cam-role"
   inputs:
     roleName: QCS_SCFExcuteRole
-    # description: test # Optional
     service:
       - scf.qcloud.com
       - cos.qcloud.com
     policy:      
-      # policyId:  # PolicyId and policyName must exist at least one
-        # - 1
-        # - 2
       policyName:
         - QCloudResourceFullAccess
         - QcloudAccessForCDNRole
  ```
  
- * The binding between policyName and policyId is bound.
 
 ### 4. Deploy
 
 ```shell
-$ serverless
+$ sls --debug
+
+  DEBUG ─ Resolving the template's static variables.
+  DEBUG ─ Collecting components from the template.
+  DEBUG ─ Downloading any NPM components found in the template.
+  DEBUG ─ Analyzing the template's components dependencies.
+  DEBUG ─ Creating the template's components graph.
+  DEBUG ─ Syncing template state.
+  DEBUG ─ Executing the template's components graph.
+  DEBUG ─ Syncing role c0hhdv-qt9mh6xj in region ap-guangzhou.
+  DEBUG ─ Updating policy for role c0hhdv-qt9mh6xj.
+  DEBUG ─ Saved state for role c0hhdv-qt9mh6xj.
+  DEBUG ─ Role c0hhdv-qt9mh6xj was successfully deployed to region ap-guangzhou.
+  DEBUG ─ Deployed role roleId is 4611686018427945536.
+
+  myRole: 
+    roleName:    QCS_SCFExcuteRole
+    description: This is tencent-cam-role component.
+    roleId:      4611686018427945536
+    service: 
+      - cos.qcloud.com
+      - scf.qcloud.com
+    policy: 
+      policyId: 
+        - 16313162
+        - 2
+      policyName: 
+        - QCloudResourceFullAccess
+        - QcloudAccessForCDNRole
+
+  17s › myFunction1 › done
+
 ```
 
 &nbsp;
 
-### Test
-```text
-DFOUNDERLIU-MB0:temp dfounderliu$ sls
+### 5. Remove
+```shell
+$ sls remove --debug
 
-  myFunction1: 
-    name:    w9pe3ej-jzy0lsg
-    roleId:  4611686018427945536
-    service: 
-      - scf.qcloud.com
-      - cos.qcloud.com
-    policy: 
-      roleName:   QCS_SCFExcuteRole
-      policyId: 
-        - 1
-        - 2
-        - 16313162
-      policyName: 
-        - AdministratorAccess
-        - QCloudResourceFullAccess
-        - QcloudAccessForCDNRole
+  DEBUG ─ Flushing template state and removing all components.
+  DEBUG ─ Removing role c0hhdv-qt9mh6xj from region ap-guangzhou.
+  DEBUG ─ Role c0hhdv-qt9mh6xj successfully removed from region ap-guangzhou.
 
-  8s › myFunction1 › done
-
-DFOUNDERLIU-MB0:temp dfounderliu$ sls remove
-
-  2s › myFunction1 › done
-
+  1s › myRole › done
 
 ```
 
