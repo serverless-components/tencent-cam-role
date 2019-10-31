@@ -65,15 +65,10 @@ myRole:
         - QCloudResourceFullAccess
         - QcloudAccessForCDNRole
  ```
+
  
- * 该组件关联了policyId和policyName之间的联系，填写任一信息都可以识别
- 
- |Param|	Required/Optional|	Default|	Description|
- | --- | :---: | --- | :--- |
- |roleName |
- |description |
- |roleName |
- |roleName |
+* [点击此处查看配置文档](https://github.com/serverless-tencent/tencent-cam-role/blob/master/docs/configure.md)
+
  
 ### 4. 部署
 

@@ -55,6 +55,8 @@ myRole:
         - QcloudAccessForCDNRole
  ```
  
+ * [Click here to view the configuration document](https://github.com/serverless-tencent/tencent-cam-role/blob/master/docs/configure.md)
+
 
 ### 4. Deploy
 
