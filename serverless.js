@@ -82,11 +82,13 @@ class TencentCamRole extends Component {
     }
 
     // we auto generate unconfigurable names
-    const oldRole = await getRole({ cam, ...this.state })
-    if (this.state.roleName && this.state.roleName !== inputs.roleName && oldRole) {
-      this.context.status(`Replacing`)
-      this.context.debug(`Deleting/Replacing role ${inputs.name}.`)
-      await deleteRole({ cam, roleName: this.state.roleName })
+    if (this.state && this.state.roleName) {
+      const oldRole = await getRole({ cam, ...this.state })
+      if (this.state.roleName && this.state.roleName !== inputs.roleName && oldRole) {
+        this.context.status(`Replacing`)
+        this.context.debug(`Deleting/Replacing role ${inputs.name}.`)
+        await deleteRole({ cam, roleName: this.state.roleName })
+      }
     }
 
     this.state.name = inputs.name
