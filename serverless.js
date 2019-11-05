@@ -126,6 +126,7 @@ class TencentCamRole extends Component {
     }
 
     const cam = this.getCamClient(this.context.credentials.tencent, this.state.region)
+    cam.sdkVersion = 'ServerlessComponent'
 
     this.context.debug(`Removing role ${this.state.name} from region ${this.state.region}.`)
     await deleteRole({ cam, ...this.state })
