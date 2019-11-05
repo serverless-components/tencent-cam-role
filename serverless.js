@@ -44,6 +44,7 @@ class TencentCamRole extends Component {
     inputs = mergeDeepRight(defaults, inputs)
 
     const cam = this.getCamClient(this.context.credentials.tencent, inputs.region)
+    cam.sdkVersion = 'ServerlessComponent'
 
     inputs = await fullPolicyId(cam, inputs)
     this.context.status(`Deploying`)
