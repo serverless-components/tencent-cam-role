@@ -6,7 +6,7 @@
 # serverless.yml
 
 myRole:
-  component: "@serverless/tencent-cam-role"
+  component: "@tencent-serverless/tencent-cam-role-beta"
   inputs:
     roleName: QCS_SCFExcuteRole
     description: test
