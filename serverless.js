@@ -101,10 +101,6 @@ class TencentCamRole extends Component {
       tencent = await this.getTempKey(tencent)
       this.context.credentials.tencent = tencent
     }
-    if (!this.context.credentials.tencent.AppId) {
-      const appId = await this.getAppid(tencent)
-      this.context.credentials.tencent.AppId = appId.AppId
-    }
 
     const cam = this.getCamClient(this.context.credentials.tencent, inputs.region)
     cam.sdkVersion = 'ServerlessComponent'
