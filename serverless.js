@@ -71,8 +71,29 @@ class TencentCamRole extends Component {
     }
   }
 
+  async sleep(ms) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms)
+    })
+  }
+
   async getTempKey() {
     const that = this
+
+    try {
+      while ((await fs.readFileSync('./.env_temp', 'utf8', { flag: 'rx' })) == 0) {
+        await that.sleep(1000)
+      }
+    } catch (e) {
+      if (e.toString().match('no such file or directory')) {
+        await fs.writeFileSync('./.env_temp', '0', { flag: 'wx' })
+      } else {
+        while (!(await fs.existsSync('./.env_temp'))) {
+          await that.sleep(1000)
+        }
+      }
+    }
+
     try {
       const data = await fs.readFileSync('./.env_temp', 'utf8')
       try {
