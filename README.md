@@ -2,7 +2,7 @@
 
 &nbsp;
 
-* [请点击这里查看中文版部署文档](./README_EN.md)
+* [请点击这里查看英文版部署文档](./README_EN.md)
 
 ## 简介
 该组件是serverless-tencent组件库中的基础组件之一。通过访问管理CAM-role组件，可以快速，方便的创建，配置和管理腾讯云的CAM角色
