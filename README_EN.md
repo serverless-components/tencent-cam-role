@@ -1,55 +1,48 @@
-# 腾讯云访问管理CAM-role组件
+# Tencent-cam-role
 
-## 简介
-该组件是serverless-tencent组件库中的基础组件之一。通过访问管理CAM-role组件，可以快速，方便的创建，配置和管理腾讯云的CAM角色
+&nbsp;
 
-## 快速开始
+- [请点击这里查看中文版部署文档](./README.md)
 
-通过CAM-role组件，对一个CAM的角色进行完整的创建，配置，部署和删除等操作。支持命令如下：
+Easily provision Tencent CAM roles using [Serverless Components](https://github.com/serverless/components).
 
-1. [安装](#1-安装)
-2. [创建](#2-创建)
-3. [配置](#3-配置)
-4. [部署](#4-部署)
-4. [移除](#5-移除)
+&nbsp;
 
-### 1. 安装
+1. [Install](#1-install)
+2. [Create](#2-create)
+3. [Configure](#3-configure)
+4. [Deploy](#4-deploy)
+4. [Remove](#5-remove)
 
-通过npm安装serverless
+&nbsp;
 
-```console
+
+### 1. Install
+
+```shell
 $ npm install -g serverless
 ```
 
-### 2. 创建
+### 2. Create
 
-本地创建 `serverless.yml` 和 `.env` 两个文件
+Just create a `serverless.yml` file
 
-```console
+```shell
 $ touch serverless.yml
-$ touch .env # 腾讯云的配置信息
+$ touch .env      # configure your Tencent api keys
 ```
-
-在 `.env` 文件中配置腾讯云的APPID，SecretId和SecretKey信息并保存
-
-如果没有腾讯云账号，可以在此[注册新账号](https://cloud.tencent.com/register)。
-
-如果已有腾讯云账号，可以在[API密钥管理
-](https://console.cloud.tencent.com/cam/capi)中获取`APPID`, `SecretId` 和`SecretKey`.
+Add the access keys of a [Tencent CAM Role](https://console.cloud.tencent.com/cam/capi) with `AdministratorAccess` in the `.env` file, using this format: 
 
 ```
 # .env
-TENCENT_SECRET_ID=123
-TENCENT_SECRET_KEY=123
+TENCENT_SECRET_ID=XXX
+TENCENT_SECRET_KEY=XXX
 ```
+* If you don't have a Tencent Cloud account, you could [sign up](https://intl.cloud.tencent.com/register) first. 
 
-### 3. 配置
-
-在serverless.yml中进行如下配置
+### 3. Configure
 
 ```yml
-# serverless.yml
-
 # serverless.yml
 
 myRole:
@@ -64,14 +57,11 @@ myRole:
         - QCloudResourceFullAccess
         - QcloudAccessForCDNRole
  ```
-
  
-* [点击此处查看配置文档](https://github.com/serverless-tencent/tencent-cam-role/blob/master/docs/configure.md)
+ * [Click here to view the configuration document](https://github.com/serverless-tencent/tencent-cam-role/blob/master/docs/configure.md)
 
- 
-### 4. 部署
 
-通过如下命令进行部署，并查看部署过程中的信息
+### 4. Deploy
 
 ```shell
 $ sls --debug
@@ -110,8 +100,7 @@ $ sls --debug
 
 &nbsp;
 
-### 5. 移除
-
+### 5. Remove
 ```shell
 $ sls remove --debug
 
@@ -123,10 +112,6 @@ $ sls remove --debug
 
 ```
 
+### New to Components?
 
-```
-
-### 还支持哪些组件？
-
-可以在 [Serverless Components](https://github.com/serverless/components) repo 中查询更多组件的信息。
-
+Checkout the [Serverless Components](https://github.com/serverless/components) repo for more information.
